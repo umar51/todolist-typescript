@@ -1,25 +1,61 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {useState} from 'react';
+import { TodoAdd } from './TodoAdd';
+import { TodoList } from './TodoList';
+//import '../src/styles/App.css';
+
+import {Wrapper} from '../src/styles/App.styles';
+
+
+const initialTodoListArray : todoListType[] = [
+  {task : "Walk the dog", checked : false},
+  {task : "Feed the dog", checked : false},
+  {task : "Pet the dog", checked : false},
+
+]
+
+
 
 function App() {
+  const [TodoListArray, SetTodoListArray] = useState<todoListType[]>(initialTodoListArray );
+
+  const toggleTodoList: toggleTodo = (selectedTodoList: todoListType) => {
+
+    const newTodoList = (TodoListArray.map((Todo: todoListType) =>{
+    
+      if (Todo === selectedTodoList){
+            return (
+              {
+              ...Todo,
+              checked : !Todo.checked,
+              }
+            )
+      }else {
+        return Todo;
+      }
+
+    }
+      )
+      )
+    SetTodoListArray(newTodoList);
+
+    }
+
+    const addToListChangeHandler: addToListHandler = (newTodo: string) => {
+
+      SetTodoListArray([...TodoListArray, {
+        task : newTodo,
+        checked : false
+
+      }])
+
+    }
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Wrapper>
+     
+      <TodoList TodoListArray={TodoListArray} toggleTodoList={toggleTodoList}/>
+      <TodoAdd addToListChangeHandler = {addToListChangeHandler}/>
+    </Wrapper>
   );
 }
 
