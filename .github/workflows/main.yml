@@ -2,27 +2,31 @@ name: Deploy
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
-  build:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      # Install node version 12
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: '12'
 
-    - name: Setup Node
-      uses: actions/setup-node@v2-beta
-      with:
-          node-version: 12
+      # Install npm packages
+      - name: Install packages
+        run: npm install
 
-    - name: Build React App
-      run: |
-        npm install # Install Dependencies
-        CI=false npm run build # CI=false to ignore warnings
+      # Build react app
+      - name: Build the app
+        run: npm run build
 
-    - name: Install Surge
-      run: npm install -g surge
+      # Install Surge 
+      - name: Install Surge
+        run: npm install -g surge
 
-    - name: Deploy to Surge
-      run:  surge ./build https://todolistapp.surge.sh/ --token ${{secrets.SURGE_TOKEN}}
+      # Deploy to the defined URL using the token
+      - name: Deploy to surge
+        run: surge ./build TODOLISTAPP.surge.sh --token ${{secrets.SURGE_TOKEN}}
